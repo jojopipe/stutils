@@ -1,9 +1,10 @@
 /* https://github.com/jojopipe/stutils */
 
-#ifndef STUTILS_STUTILS_H
-#define STUTILS_STUTILS_H
+#ifndef STUTILS_STUTILS_C
+#define STUTILS_STUTILS_C
 
 #include <stdlib.h>
+#include <stdio.h>
 
 struct stu_string {
     int length;
@@ -124,4 +125,27 @@ int stu_string_to_int_ex(const char *s, char **end, int base) {
     return out * (sign ? sign : 1);
 }
 
-#endif //STUTILS_STUTILS_H
+/**
+ * checks whether a zero-terminated string ends with pattern
+ * @param s zero-terminated string to be checked
+ * @param pattern pattern to be compared against, should also be zero-terminated
+ * @return 1, if s ends with pattern
+ * @return 0, else
+ */
+int stu_string_endswith(const char *s, const char *pattern) {
+    int slen = stu_string_length(s)-1;
+    int plen = stu_string_length(pattern)-1;
+    //this is a test
+    //          test
+    char scurr;
+    char pcurr;
+    for (int i = 0; i < slen; ++i) {
+        scurr = s[slen-i];
+        pcurr = pattern[plen-i];
+        if (scurr != pcurr) return 0;
+        if (pattern == &pattern[plen-i]) break; //reached first char of pattern
+    }
+    return 1;
+}
+
+#endif //STUTILS_STUTILS_C

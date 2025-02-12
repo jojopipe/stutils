@@ -6,7 +6,7 @@ RM= rm -f
 
 all: stutils
 
-stutils: main.c
+stutils: main.c stutils.h
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
