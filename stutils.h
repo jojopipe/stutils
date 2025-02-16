@@ -5,6 +5,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
+
+//TODO: string builder (?)
 
 struct stu_string {
     int length;
@@ -27,14 +30,14 @@ int stu_string_length(const char *s) {
 }
 
 /**
- * compares c against s.
- * \brief is c contained in s?
- * \param c
- * \param s
- * \return 1 if c is contained in s
+ * checks whether c is contained in s.
+ * \brief c contained in s?
+ * \param c character to match
+ * \param s string to check
+ * \return 1, if c is contained in s
  * \return 0, else
  */
-int stu_char_match(char c, char *s) {
+int stu_contains_char(char c, char *s) {
     char *end = &s[stu_string_length(s)];
     for (char *p = s; p < end; ++p) { //pointer magic
         if (*p == c) {
@@ -61,11 +64,11 @@ void stu_string_split(char **output, int *outputc, char *input, char split[]) {
     output[*outputc] = input;
     for (int i = 1; i < inputc; ++i) {
         if (input[i] == '\0') break;
-        if (stu_char_match(input[i], split)) {
+        if (stu_contains_char(input[i], split)) {
             input[i] = '\0';
             /* look for next non-split char / skip over every split char */
             for (int j = i + 1; j < inputc; ++j) {
-                if (stu_char_match(input[j], split)) continue;
+                if (stu_contains_char(input[j], split)) continue;
                 if (input[j] == '\0') break;
                 output[++(*outputc)] = &input[j];
                 i += (j - i - 1);
@@ -81,6 +84,11 @@ void stu_string_split(char **output, int *outputc, char *input, char split[]) {
      */
 }
 
+/**
+ * converts s to an integer. assumes input string is in base 10
+ * @param s input string
+ * @return converted int
+ */
 int stu_string_to_int(const char *s) {
     int out = 0;
     char curr;
@@ -96,7 +104,16 @@ int stu_string_to_int(const char *s) {
     return out * (sign ? sign : 1);
 }
 
+/**
+ * converts string s to an integer
+ * @warning max base is 36
+ * @param s string to be converted
+ * @param end pointer to the first non-number char
+ * @param base base to convert from
+ * @return converted int
+ */
 int stu_string_to_int_ex(const char *s, char **end, int base) {
+    assert(1 <= base && base <= 36);
     int out = 0;
     char curr;
     int sign = 0;
@@ -135,8 +152,6 @@ int stu_string_to_int_ex(const char *s, char **end, int base) {
 int stu_string_endswith(const char *s, const char *pattern) {
     int slen = stu_string_length(s)-1;
     int plen = stu_string_length(pattern)-1;
-    //this is a test
-    //          test
     char scurr;
     char pcurr;
     for (int i = 0; i < slen; ++i) {
@@ -146,6 +161,33 @@ int stu_string_endswith(const char *s, const char *pattern) {
         if (pattern == &pattern[plen-i]) break; //reached first char of pattern
     }
     return 1;
+}
+
+/**
+ * reads file file_name and allocates a string, which the file content is written to
+ * @warning the user is responsible to free the allocated memory
+ * @param file_name file to read
+ */
+char *stu_from_file(const char *file_name) {
+    FILE *file = fopen(file_name, "r");
+    if (!file) {
+        printf("file could not be opened.");
+        exit(1);
+    }
+    fseek(file, 0, SEEK_END);
+    long length = ftell(file);
+    rewind(file);
+    char *buffer = malloc(length + 1);
+    if (!buffer) {
+        printf("malloc failed.");
+        exit(1);
+    }
+    if(!fread(buffer, 1, length, file)) {
+        printf("fread failed.");
+        exit(1);
+    }
+    buffer[length-1] = '\0';
+    return buffer;
 }
 
 #endif //STUTILS_STUTILS_C
