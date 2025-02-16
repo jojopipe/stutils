@@ -169,7 +169,7 @@ int stu_string_endswith(const char *s, const char *pattern) {
  * @param file_name file to read
  */
 char *stu_from_file(const char *file_name) {
-    FILE *file = fopen(file_name, "r");
+    FILE *file = fopen(file_name, "rb");
     if (!file) {
         printf("file could not be opened.");
         exit(1);
@@ -186,7 +186,7 @@ char *stu_from_file(const char *file_name) {
         printf("fread failed.");
         exit(1);
     }
-    buffer[length-1] = '\0';
+    buffer[length] = '\0';
     return buffer;
 }
 
