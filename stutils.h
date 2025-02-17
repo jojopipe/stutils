@@ -190,4 +190,18 @@ char *stu_from_file(const char *file_name) {
     return buffer;
 }
 
+/**
+ * replaces all characters r in zero-terminated string s with w
+ * @param s string
+ * @param r replaced character
+ * @param w replacing character
+ */
+void stu_replace(char *s, char r, char w) {
+    int len = stu_string_length(s);
+    for (int i = 0; i < len; ++i) {
+        if (s[i] == r)
+            s[i] = w;
+    }
+}
+
 #endif //STUTILS_STUTILS_C
