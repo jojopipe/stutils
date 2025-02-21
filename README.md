@@ -1,2 +1,2 @@
 # stutils
-cross platform string utility library for C 🐢
+cross platform string utility header-only library for C 🐢
